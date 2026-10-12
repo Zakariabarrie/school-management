@@ -1,5 +1,6 @@
 import { INITIAL_DATA } from '../data/seed';
-import { demoPasswordForUser, mergeSeedUsers } from './seed-users';
+import { exhibitionPasswordMatches, normalizeLoginInput } from './demo-credentials';
+import { demoPasswordForUser, exhibitionLoginUsers } from './seed-users';
 import type { DemoUser } from '../types';
 
 /** Exhibition administrator — kept in one place for seed sync and login. */
@@ -55,19 +56,20 @@ export function usersForLogin(users: DemoUser[]): DemoUser[] {
 }
 
 export function findDemoAccount(email: string, password: string, users: DemoUser[]): DemoUser | null {
-  const normalizedEmail = email.trim().toLowerCase();
-  const normalizedPassword = password.trim();
-  const list = usersForLogin(mergeSeedUsers(users));
+  const normalizedEmail = normalizeLoginInput(email).toLowerCase();
+  const normalizedPassword = normalizeLoginInput(password);
+  const list = usersForLogin(exhibitionLoginUsers(users));
 
   if (ADMIN_LOGIN_EMAILS.has(normalizedEmail)) {
-    if (normalizedPassword !== EXHIBITION_ADMIN.password) return null;
+    if (!exhibitionPasswordMatches(normalizedEmail, EXHIBITION_ADMIN.password, normalizedPassword)) return null;
     const admin = list.find((user) => user.role === 'administrator') ?? seedAdministratorUser();
     return { ...admin, email: normalizedEmail, password: EXHIBITION_ADMIN.password };
   }
 
   const user = list.find((item) => item.email.toLowerCase() === normalizedEmail);
   if (!user) return null;
-  if (demoPasswordForUser(user) !== normalizedPassword) return null;
+  const expected = demoPasswordForUser(user);
+  if (!exhibitionPasswordMatches(normalizedEmail, expected, normalizedPassword)) return null;
   if (user.active === false) return null;
-  return { ...user, password: demoPasswordForUser(user) };
+  return { ...user, password: expected };
 }

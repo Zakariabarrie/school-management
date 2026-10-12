@@ -24,7 +24,7 @@ export function LoginPage() {
 
   async function signIn(nextEmail: string, nextPassword: string) {
     setError('');
-    const problem = await login(nextEmail, nextPassword);
+    const problem = await login(nextEmail.trim(), nextPassword.trim());
     if (problem) {
       setError(problem);
       return;
@@ -63,7 +63,7 @@ export function LoginPage() {
           onSubmit={(event) => {
             event.preventDefault();
             setError('');
-            signIn(email, password);
+            signIn(email.trim(), password.trim());
           }}
         >
           {error ? <p className="alert" role="alert">{error}</p> : null}

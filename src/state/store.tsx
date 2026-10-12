@@ -24,8 +24,12 @@ import type {
 } from '../types';
 
 /** Standalone demo persistence (does not read or write legacy `rvss-sms-demo-v2`). */
-export const STORAGE_KEY = 'rvss-sms-standalone-demo-v3';
-export const PREVIOUS_STORAGE_KEYS = ['rvss-sms-standalone-demo-v2', 'rvss-sms-standalone-demo-v1'] as const;
+export const STORAGE_KEY = 'rvss-sms-standalone-demo-v4';
+export const PREVIOUS_STORAGE_KEYS = [
+  'rvss-sms-standalone-demo-v3',
+  'rvss-sms-standalone-demo-v2',
+  'rvss-sms-standalone-demo-v1',
+] as const;
 export const LEGACY_STORAGE_KEY = 'rvss-sms-demo-v2';
 
 function readStoredPayload(): string | null {

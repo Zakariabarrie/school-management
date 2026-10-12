@@ -1,15 +1,28 @@
 import { INITIAL_DATA } from '../data/seed';
 import type { DemoUser } from '../types';
 
+function bundledSeedUsers(): DemoUser[] {
+  return INITIAL_DATA.users?.length
+    ? INITIAL_DATA.users.map((user) => structuredClone(user))
+    : [];
+}
+
 /** Bundled demonstration accounts (names, emails, passwords) from seed. */
 export function mergeSeedUsers(users: DemoUser[]): DemoUser[] {
+  const seedList = bundledSeedUsers();
+  if (!seedList.length) return Array.isArray(users) ? users : [];
   const safe = Array.isArray(users) ? users : [];
-  const seedIds = new Set(INITIAL_DATA.users.map((user) => user.id));
-  const seedEmails = new Set(INITIAL_DATA.users.map((user) => user.email.toLowerCase()));
+  const seedIds = new Set(seedList.map((user) => user.id));
+  const seedEmails = new Set(seedList.map((user) => user.email.toLowerCase()));
   const custom = safe.filter(
-    (user) => !seedIds.has(user.id) && !seedEmails.has(user.email.toLowerCase()),
+    (user) => user?.email && !seedIds.has(user.id) && !seedEmails.has(user.email.toLowerCase()),
   );
-  return [...INITIAL_DATA.users.map((user) => structuredClone(user)), ...custom];
+  return [...seedList, ...custom];
+}
+
+/** Authoritative exhibition accounts for sign-in (seed first, then custom accounts). */
+export function exhibitionLoginUsers(extraUsers: DemoUser[]): DemoUser[] {
+  return mergeSeedUsers(extraUsers);
 }
 
 export function seedUserForEmail(email: string): DemoUser | undefined {
