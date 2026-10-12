@@ -1,5 +1,6 @@
 import { INITIAL_DATA } from '../data/seed';
-import { exhibitionPasswordMatches, normalizeLoginInput } from './demo-credentials';
+import { exhibitionPasswordMatches, normalizeDemoLoginEmail, normalizeLoginInput } from './demo-credentials';
+import { schoolEmail } from '../data/school';
 import { demoPasswordForUser, exhibitionLoginUsers } from './seed-users';
 import type { DemoUser } from '../types';
 
@@ -19,6 +20,8 @@ export const ADMIN_LOGIN_EMAILS = new Set(
   [
     EXHIBITION_ADMIN.email,
     'olaraymohammad@gmail.com',
+    schoolEmail('admin'),
+    schoolEmail('olaraymohammad'),
     'admin@rokelvalley.edu.sl',
     'olaraymohammad@rokelvalley.edu.sl',
   ].map((value) => value.toLowerCase()),
@@ -56,17 +59,20 @@ export function usersForLogin(users: DemoUser[]): DemoUser[] {
 }
 
 export function findDemoAccount(email: string, password: string, users: DemoUser[]): DemoUser | null {
-  const normalizedEmail = normalizeLoginInput(email).toLowerCase();
+  const rawEmail = normalizeLoginInput(email).toLowerCase();
+  const normalizedEmail = normalizeDemoLoginEmail(rawEmail);
   const normalizedPassword = normalizeLoginInput(password);
   const list = usersForLogin(exhibitionLoginUsers(users));
 
-  if (ADMIN_LOGIN_EMAILS.has(normalizedEmail)) {
+  if (ADMIN_LOGIN_EMAILS.has(rawEmail) || ADMIN_LOGIN_EMAILS.has(normalizedEmail)) {
     if (!exhibitionPasswordMatches(normalizedEmail, EXHIBITION_ADMIN.password, normalizedPassword)) return null;
     const admin = list.find((user) => user.role === 'administrator') ?? seedAdministratorUser();
-    return { ...admin, email: normalizedEmail, password: EXHIBITION_ADMIN.password };
+    return { ...admin, email: rawEmail.includes('@') ? rawEmail : normalizedEmail, password: EXHIBITION_ADMIN.password };
   }
 
-  const user = list.find((item) => item.email.toLowerCase() === normalizedEmail);
+  const user =
+    list.find((item) => item.email.toLowerCase() === normalizedEmail) ??
+    list.find((item) => normalizeDemoLoginEmail(item.email) === normalizedEmail);
   if (!user) return null;
   const expected = demoPasswordForUser(user);
   if (!exhibitionPasswordMatches(normalizedEmail, expected, normalizedPassword)) return null;

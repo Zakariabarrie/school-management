@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Avatar, Button, ConfirmDialog, Field, PageHeader, SelectInput, StatusBadge, TextArea, TextInput } from '../components/ui';
-import { CLASSES, DEMO_PASSWORD, GENDERS, RELATIONS, STUDENT_STATUSES, TERM_FEE } from '../data/school';
+import { CLASSES, DEMO_PASSWORD, GENDERS, RELATIONS, SCHOOL_EMAIL_DOMAIN, STUDENT_STATUSES, TERM_FEE } from '../data/school';
 import { digitsOnly, formatDate, formatMoney, fullName, nextNumberedId, todayISO } from '../lib/format';
 import { ACCOUNT_ROLES, ROLE_LABELS, accountRoleChoices } from '../lib/permissions';
 import { usePageTitle } from '../lib/usePageTitle';
@@ -122,7 +122,7 @@ function blankAdmission(id: string): AdmissionDraft {
 
 function suggestEmail(firstName: string, lastName: string): string {
   const slug = `${firstName}.${lastName}`.toLowerCase().replace(/[^a-z.]+/g, '').replace(/^\.+|\.+$/g, '');
-  return slug.length > 1 ? `${slug}@rokelvalley.edu.sl` : '';
+  return slug.length > 1 ? `${slug}@${SCHOOL_EMAIL_DOMAIN}` : '';
 }
 
 export function RegisterPage() {
@@ -241,7 +241,7 @@ function StaffRegistration() {
               <TextInput value={account.name} onChange={(event) => setAccount({ ...account, name: event.target.value })} />
             </Field>
             <Field label="Email">
-              <TextInput type="email" value={account.email} onChange={(event) => setAccount({ ...account, email: event.target.value })} placeholder="name@rokelvalley.edu.sl" />
+              <TextInput type="email" value={account.email} onChange={(event) => setAccount({ ...account, email: event.target.value })} placeholder={`name@${SCHOOL_EMAIL_DOMAIN}`} />
             </Field>
             {editing ? (
               <Field label="Role">

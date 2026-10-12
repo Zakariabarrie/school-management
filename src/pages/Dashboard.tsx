@@ -59,18 +59,15 @@ export function DashboardPage() {
 function AdminDashboard() {
   const { state, session, settings } = useApp();
   const figures = schoolFigures(state.students, state.teachers, state.fees);
-  const today = todayISO();
-  const todayRecords = state.attendance.filter((record) => record.date === today);
-  const dated = todayRecords.length > 0 ? todayRecords : state.attendance.filter((record) => record.date === '2026-09-29');
-  const rate = attendanceRate(dated);
-  const usingToday = todayRecords.length > 0;
+  const septemberRecords = state.attendance.filter((record) => record.date.startsWith('2026-09'));
+  const rate = attendanceRate(septemberRecords);
+  const septemberCounts = attendanceCounts(septemberRecords);
   const gender = genderCounts(state.students);
   const core = CORE_SUBJECTS.map((subject) => classSubjectSummary(state.students.map((student) => student.id), state.marks, settings.academicYear, SHOWCASE.term, subject, settings));
   const ready = core.flatMap((item) => (item.average == null ? [] : [item.average]));
   const average = ready.length ? ready.reduce((sum, value) => sum + value, 0) / ready.length : null;
   const subjects = CORE_SUBJECTS.map((subject, index) => ({ subject, average: core[index].average ?? 0 })).filter((_, index) => core[index].average != null);
-  const september = attendanceRate(state.attendance.filter((record) => record.date.startsWith('2026-09')));
-  const trend = [...ATTENDANCE_TREND, { month: 'Sep', rate: september ?? 0 }];
+  const trend = [...ATTENDANCE_TREND, { month: 'Sep', rate: rate ?? 0 }];
   const recent = [...state.students].sort((a, b) => b.admissionDate.localeCompare(a.admissionDate)).slice(0, 5);
 
   const greeting = session?.name.split(' ')[0] || settings.shortName;
@@ -94,12 +91,12 @@ function AdminDashboard() {
         </dl>
       </header>
       <section className="stat-board" aria-label="School summary">
-        <StatCard tone="blue" icon={<GraduationCap size={18} />} label="Total students" value={formatNumber(figures.students)} hint={`${state.students.length} in the demonstration register`} />
-        <StatCard tone="teal" icon={<Presentation size={18} />} label="Teachers" value={formatNumber(figures.teachers)} hint="Teaching staff on roll" />
-        <StatCard tone="green" icon={<CalendarCheck size={18} />} label="Today's attendance" value={formatPercent(rate)} hint={usingToday ? 'Present on the demonstration register' : 'Latest September register'} />
-        <StatCard tone="teal" icon={<Wallet size={18} />} label="Fee collection" value={formatMoney(figures.collected)} hint="School position for this term" />
-        <StatCard tone="amber" icon={<TriangleAlert size={18} />} label="Outstanding fees" value={formatMoney(figures.outstanding)} hint="Still to be collected" />
-        <StatCard tone="blue" icon={<ClipboardList size={18} />} label="Examination average" value={formatPercent(average)} hint="First Term, core subjects" />
+        <StatCard tone="blue" icon={<GraduationCap size={18} />} label="Total students" value={formatNumber(figures.students)} hint={`${state.students.filter((student) => student.status === 'Active').length} active on the register`} />
+        <StatCard tone="teal" icon={<Presentation size={18} />} label="Teachers" value={formatNumber(figures.teachers)} hint="ScienceWorld teaching staff" />
+        <StatCard tone="green" icon={<CalendarCheck size={18} />} label="September attendance" value={formatPercent(rate)} hint={septemberCounts.total ? `${septemberCounts.present} present · ${septemberCounts.absent} absent · ${septemberCounts.sick} sick` : 'No register yet'} />
+        <StatCard tone="teal" icon={<Wallet size={18} />} label="Fee collection" value={formatMoney(figures.collected)} hint="First Term · demonstration register" />
+        <StatCard tone="amber" icon={<TriangleAlert size={18} />} label="Outstanding fees" value={formatMoney(figures.outstanding)} hint="Still to be collected this term" />
+        <StatCard tone="blue" icon={<ClipboardList size={18} />} label="Examination average" value={formatPercent(average)} hint={`First Term · ${ready.length} core subjects`} />
       </section>
       <section className="card dash-block">
         <div className="dash-card-head">
@@ -125,7 +122,7 @@ function AdminDashboard() {
         </article>
         <article className="card chart-card">
           <h2>Attendance overview</h2>
-          <p className="small">January to July are school figures. September uses the demonstration register.</p>
+          <p className="small">September 2026 register for all demonstration students.</p>
           <AttendanceChart labels={trend.map((item) => item.month)} values={trend.map((item) => item.rate)} />
         </article>
         <article className="card chart-card">

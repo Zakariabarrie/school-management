@@ -31,7 +31,7 @@ function palette(patch: Partial<SchoolColours>): SchoolColours {
 }
 
 export const COLOUR_PRESETS: { name: string; colours: SchoolColours }[] = [
-  { name: 'Rokel Valley', colours: DEFAULT_COLOURS },
+  { name: 'ScienceWorld', colours: DEFAULT_COLOURS },
   { name: 'Forest', colours: palette({ menu: '#1b3a32', button: '#2f6b4f', highlight: '#5e8f62', page: '#f2f6f1' }) },
   { name: 'Coast', colours: palette({ menu: '#16324f', button: '#1f6f8b', highlight: '#3d8b9c', page: '#f1f6f8' }) },
   { name: 'Clay', colours: palette({ menu: '#3d2c29', button: '#8a4b3c', highlight: '#a36b4a', page: '#f7f3ee' }) },

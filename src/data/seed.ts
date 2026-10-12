@@ -4,10 +4,15 @@ import {
   DEFAULT_ASSESSMENTS,
   DEFAULT_GRADES,
   PARTIAL_FEE,
+  SCHOOL_DISPLAY_NAME,
+  SCHOOL_OFFICE_EMAIL,
+  SCHOOL_PAYMENT_REFERENCE_PREFIX,
+  SCHOOL_SHORT_NAME,
   subjectsForClass,
   teacherForSubject,
   TERM_FEE,
   buildTimetable,
+  schoolEmail,
 } from './school';
 import { DEFAULT_COLOURS } from '../lib/colours';
 import {
@@ -221,7 +226,7 @@ function buildSeedUsers(students: Student[]): DemoUser[] {
     {
       id: 'USR-005',
       name: 'Mamoudou Barry',
-      email: 'library@rokelvalley.edu.sl',
+      email: schoolEmail('library'),
       password: LIBRARY_LOGIN_PASSWORD,
       role: 'libraryManager',
       roleLabel: 'Library Manager',
@@ -230,7 +235,7 @@ function buildSeedUsers(students: Student[]): DemoUser[] {
     {
       id: 'USR-007',
       name: 'Rugiatu Hawa Kamara',
-      email: 'register@rokelvalley.edu.sl',
+      email: schoolEmail('register'),
       password: REGISTRAR_LOGIN_PASSWORD,
       role: 'register',
       roleLabel: 'Register',
@@ -239,7 +244,7 @@ function buildSeedUsers(students: Student[]): DemoUser[] {
     {
       id: 'USR-006',
       name: 'Rugiatu Hawa Kamara',
-      email: 'registrar@rokelvalley.edu.sl',
+      email: schoolEmail('registrar'),
       password: FINANCE_LOGIN_PASSWORD,
       role: 'registrar',
       roleLabel: 'Finance',
@@ -295,14 +300,9 @@ function buildDemoData(): DemoData {
   ];
 
   const teachers: Teacher[] = [
-    teacher('TCH-014', 'Mr.', 'Bockarie', 'Momoh', 'Male', ['Mathematics'], ['JSS 2', 'JSS 3'], '+232 78 221 045', 'b.momoh@rokelvalley.edu.sl', 'B.Sc. Mathematics, Fourah Bay College', '2016-09-05'),
-    teacher('TCH-021', 'Mr.', 'Idrissa', 'Chernor Kamara', 'Male', ['English Language'], ['JSS 3', 'SSS 1'], '+232 76 540 218', 'i.kamara@rokelvalley.edu.sl', 'B.A. English, University of Sierra Leone', '2014-09-01'),
-    teacher('TCH-008', 'Ms.', 'Fatmata', 'Jalloh', 'Female', ['ICT'], ['JSS 1', 'JSS 2', 'JSS 3'], '+232 77 318 902', 'f.jalloh@rokelvalley.edu.sl', 'B.Sc. Information Technology, Njala University', '2019-09-02'),
-    teacher('TCH-033', 'Mr.', 'Mohammed', 'Olaray', 'Male', ['Integrated Science'], ['JSS 3', 'SSS 1', 'SSS 2'], '+232 75 662 114', 'm.olaray@rokelvalley.edu.sl', 'B.Sc. Chemistry, Fourah Bay College', '2012-09-03'),
-    teacher('TCH-019', 'Mrs.', 'Mariama', 'Bangura', 'Female', ['Social Studies'], ['JSS 1', 'JSS 2'], '+232 78 904 331', 'm.bangura@rokelvalley.edu.sl', 'B.Ed. Social Studies, University of Sierra Leone', '2015-09-07'),
-    teacher('TCH-027', 'Mr.', 'Alusine', 'Turay', 'Male', ['French'], ['JSS 2', 'JSS 3', 'SSS 1'], '+232 76 228 457', 'a.turay@rokelvalley.edu.sl', 'B.A. French, Fourah Bay College', '2017-09-04'),
-    teacher('TCH-041', 'Mrs.', 'Isatu', 'Mansaray', 'Female', ['Agricultural Science'], ['JSS 1', 'SSS 1', 'SSS 2'], '+232 77 515 680', 'i.mansaray@rokelvalley.edu.sl', 'B.Sc. Agriculture, Njala University', '2011-09-05', 'On leave'),
-    teacher('TCH-012', 'Mr.', 'Abdulai', 'Jalloh', 'Male', ['Religious & Moral Education'], ['JSS 3', 'SSS 1', 'SSS 3'], '+232 78 103 774', 'a.jalloh@rokelvalley.edu.sl', 'B.A. Theology, University of Sierra Leone', '2013-09-02'),
+    teacher('TCH-014', 'Mr.', 'Bockarie', 'Momoh', 'Male', ['Mathematics', 'Social Studies'], ['JSS 2', 'JSS 3', 'SSS 1'], '+232 78 221 045', 'b.momoh@scieneworld.edu.sl', 'B.Sc. Mathematics, Fourah Bay College', '2016-09-05'),
+    teacher('TCH-021', 'Mr.', 'Idrissa', 'Chernor Kamara', 'Male', ['English Language', 'French', 'Religious & Moral Education'], ['JSS 1', 'JSS 3', 'SSS 1', 'SSS 3'], '+232 76 540 218', 'i.kamara@scieneworld.edu.sl', 'B.A. English, University of Sierra Leone', '2014-09-01'),
+    teacher('TCH-033', 'Mr.', 'Mohammed', 'Olaray', 'Male', ['Integrated Science', 'ICT', 'Agricultural Science'], ['JSS 1', 'JSS 2', 'JSS 3', 'SSS 1', 'SSS 2'], '+232 75 662 114', 'm.olaray@scieneworld.edu.sl', 'B.Sc. Chemistry, Fourah Bay College', '2012-09-03'),
   ];
 
   const attendance: AttendanceRecord[] = [];
@@ -382,7 +382,7 @@ function buildDemoData(): DemoData {
         amount: firstAmount,
         date: firstDate,
         method: methods[index % methods.length],
-        reference: `RV-${2400 + index}`,
+        reference: `${SCHOOL_PAYMENT_REFERENCE_PREFIX}-${2400 + index}`,
         recordedBy: 'Alie Tarawallie',
       });
       payments.push({
@@ -392,7 +392,7 @@ function buildDemoData(): DemoData {
         amount: paid - firstAmount,
         date: addDays(firstDate, 14),
         method: methods[(index + 1) % methods.length],
-        reference: `RV-${2400 + index}B`,
+        reference: `${SCHOOL_PAYMENT_REFERENCE_PREFIX}-${2400 + index}B`,
         recordedBy: 'Alie Tarawallie',
       });
     } else if (paid > 0) {
@@ -403,7 +403,7 @@ function buildDemoData(): DemoData {
         amount: paid,
         date: payDates[index % payDates.length],
         method: methods[index % methods.length],
-        reference: `RV-${2400 + index}`,
+        reference: `${SCHOOL_PAYMENT_REFERENCE_PREFIX}-${2400 + index}`,
         recordedBy: 'Alie Tarawallie',
       });
     }
@@ -421,7 +421,7 @@ function buildDemoData(): DemoData {
     { id: 'BK-0881', title: 'French for Beginners', author: 'E. Touré', category: 'Languages', quantity: 6, available: 6 },
     { id: 'BK-1604', title: 'Civic Education for Sierra Leone', author: 'M. J. Kamara', category: 'Social Studies', quantity: 22, available: 22 },
     { id: 'BK-1711', title: 'Computer Studies Workbook', author: 'F. Jalloh', category: 'ICT', quantity: 30, available: 30 },
-    { id: 'BK-1702', title: 'Atlas of Sierra Leone', author: 'Rokel Valley Geography Department', category: 'Reference', quantity: 2, available: 2 },
+    { id: 'BK-1702', title: 'Atlas of Sierra Leone', author: 'ScienceWorld Geography Department', category: 'Reference', quantity: 2, available: 2 },
     { id: 'BK-1820', title: 'Poetry for Secondary Schools', author: 'K. Brew', category: 'Literature', quantity: 14, available: 14 },
   ];
   const loans: Loan[] = [];
@@ -494,12 +494,12 @@ function buildDemoData(): DemoData {
     ],
     users: buildSeedUsers(students),
     settings: {
-      name: 'Rokel Valley Secondary School',
-      shortName: 'Rokel Valley',
+      name: SCHOOL_DISPLAY_NAME,
+      shortName: SCHOOL_SHORT_NAME,
       motto: 'Knowledge, Discipline, Service',
       address: 'Hill Station, Freetown, Sierra Leone',
       phone: '+232 76 000 214',
-      email: 'office@rokelvalley.edu.sl',
+      email: SCHOOL_OFFICE_EMAIL,
       academicYear: ACADEMIC_YEAR,
       currentTerm: CURRENT_TERM,
       currency: 'SLE',
@@ -514,26 +514,16 @@ function buildDemoData(): DemoData {
 }
 
 /** Bump when the demonstration student roster or related seed rows change. */
-export const SEED_ROSTER_REVISION = 3;
+export const SEED_ROSTER_REVISION = 5;
 
 export const INITIAL_DATA = buildDemoData();
 
-function paidTotal(fees: FeeAccount[]) {
-  return fees.reduce((sum, fee) => sum + fee.paid, 0);
-}
-
-function outstandingTotal(fees: FeeAccount[]) {
-  return fees.reduce((sum, fee) => sum + Math.max(0, fee.expected - fee.paid), 0);
-}
-
-const initialExpected = INITIAL_DATA.fees.reduce((sum, fee) => sum + fee.expected, 0);
-const initialFullyPaid = INITIAL_DATA.fees.filter((fee) => fee.expected > 0 && fee.paid >= fee.expected).length;
-
+/** Demonstration dashboard uses live register totals only (no inflated school-wide offsets). */
 export const OFFSETS = {
-  students: 1248 - INITIAL_DATA.students.length,
-  teachers: 86 - INITIAL_DATA.teachers.length,
-  collected: 482_500 - paidTotal(INITIAL_DATA.fees),
-  outstanding: 76_500 - outstandingTotal(INITIAL_DATA.fees),
-  expected: 482_500 + 76_500 - initialExpected,
-  paidStudents: 912 - initialFullyPaid,
+  students: 0,
+  teachers: 0,
+  collected: 0,
+  outstanding: 0,
+  expected: 0,
+  paidStudents: 0,
 };

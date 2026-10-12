@@ -12,6 +12,16 @@ import type {
   TimetableSlot,
 } from '../types';
 
+export const SCHOOL_DISPLAY_NAME = 'ScienceWorld Secondary School';
+export const SCHOOL_SHORT_NAME = 'ScienceWorld';
+export const SCHOOL_EMAIL_DOMAIN = 'scieneworld.edu.sl';
+export const SCHOOL_OFFICE_EMAIL = `office@${SCHOOL_EMAIL_DOMAIN}`;
+export const SCHOOL_PAYMENT_REFERENCE_PREFIX = 'SW';
+
+export function schoolEmail(localPart: string): string {
+  return `${localPart}@${SCHOOL_EMAIL_DOMAIN}`;
+}
+
 export const ACADEMIC_YEAR = '2026/2027';
 export const CURRENT_TERM = 'First Term';
 export const TERM_FEE = 2200;
@@ -49,12 +59,12 @@ export const DEFAULT_GRADES: GradeBand[] = [
 ];
 
 export const CLASSES: SchoolClass[] = [
-  { name: 'JSS 1', level: 'Junior Secondary', formTeacherId: 'TCH-019' },
-  { name: 'JSS 2', level: 'Junior Secondary', formTeacherId: 'TCH-027' },
+  { name: 'JSS 1', level: 'Junior Secondary', formTeacherId: 'TCH-021' },
+  { name: 'JSS 2', level: 'Junior Secondary', formTeacherId: 'TCH-014' },
   { name: 'JSS 3', level: 'Junior Secondary', formTeacherId: 'TCH-014' },
   { name: 'SSS 1', level: 'Senior Secondary', formTeacherId: 'TCH-021' },
   { name: 'SSS 2', level: 'Senior Secondary', formTeacherId: 'TCH-033' },
-  { name: 'SSS 3', level: 'Senior Secondary', formTeacherId: 'TCH-012' },
+  { name: 'SSS 3', level: 'Senior Secondary', formTeacherId: 'TCH-021' },
 ];
 
 export const JSS_SUBJECTS = [
@@ -112,15 +122,7 @@ export const PERIODS: Period[] = [
   { id: 'p5', start: '13:00', end: '14:00' },
 ];
 
-export const ATTENDANCE_TREND = [
-  { month: 'Jan', rate: 91.2 },
-  { month: 'Feb', rate: 92.4 },
-  { month: 'Mar', rate: 93.1 },
-  { month: 'Apr', rate: 90.8 },
-  { month: 'May', rate: 94.0 },
-  { month: 'Jun', rate: 92.6 },
-  { month: 'Jul', rate: 93.8 },
-];
+export const ATTENDANCE_TREND: { month: string; rate: number }[] = [];
 
 export function subjectsForClass(className: string): string[] {
   return className.startsWith('SSS') ? SSS_SUBJECTS : JSS_SUBJECTS;
@@ -133,12 +135,12 @@ export function teacherForSubject(subject: string): string {
 const SUBJECT_TEACHER: Record<string, string> = {
   Mathematics: 'TCH-014',
   'English Language': 'TCH-021',
-  ICT: 'TCH-008',
+  ICT: 'TCH-033',
   'Integrated Science': 'TCH-033',
-  'Social Studies': 'TCH-019',
-  French: 'TCH-027',
-  'Agricultural Science': 'TCH-041',
-  'Religious & Moral Education': 'TCH-012',
+  'Social Studies': 'TCH-014',
+  French: 'TCH-021',
+  'Agricultural Science': 'TCH-033',
+  'Religious & Moral Education': 'TCH-021',
 };
 
 const JSS3_PLAN: Record<DayName, string[]> = {

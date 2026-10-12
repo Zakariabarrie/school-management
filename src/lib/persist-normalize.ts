@@ -31,6 +31,7 @@ export function applySeedRoster(data: DemoData): DemoData {
   next.payments = structuredClone(seed.payments);
   next.loans = structuredClone(seed.loans);
   next.notifications = structuredClone(seed.notifications);
+  next.teachers = structuredClone(seed.teachers);
   next.users = mergeSeedUsers(next.users);
   return next;
 }
@@ -77,7 +78,24 @@ export function normalizeSchoolData(raw: DemoData): DemoData {
   );
   data.payments = splitStoredPartPayments(data.fees, data.payments);
   data.users = mergeSeedUsers(data.users);
-  return applySeedAdministrator(applySeedRoster(data));
+  if (INITIAL_DATA.teachers.length) {
+    data.teachers = structuredClone(INITIAL_DATA.teachers);
+  }
+  return applySeedAdministrator(applySeedSchoolIdentity(applySeedRoster(data)));
+}
+
+/** Keeps school name and office contact aligned with the bundled seed. */
+function applySeedSchoolIdentity(data: DemoData): DemoData {
+  const seed = INITIAL_DATA.settings;
+  return {
+    ...data,
+    settings: {
+      ...data.settings,
+      name: seed.name,
+      shortName: seed.shortName,
+      email: seed.email,
+    },
+  };
 }
 
 /** Keeps exhibition administrator in sync with seed (name, email, password) when local data is older. */
